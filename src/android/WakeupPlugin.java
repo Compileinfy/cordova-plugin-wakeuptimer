@@ -142,6 +142,21 @@ public class WakeupPlugin extends CordovaPlugin {
 		}
 	}
 
+	private static  void  addOptionalOptionExtras(Intent intent, JSONObject data) throws JSONException {
+    	String[] optionals = {"nativeNotification", "awakeScreen", "nativeNotification"};
+		String[] optionalText = {"notificationChannelId", "notificationChannelTitle", "title", "message"};
+
+		for (String optional :optionals) {
+			addOptionalBooleanExtra(intent, optional, data);
+		}
+
+		for (String optional :optionalText) {
+			if ( data.has(optional)){
+				intent.putExtra(optional, data.getString(optional));
+			}
+		}
+	}
+
 	@SuppressLint({ "SimpleDateFormat", "NewApi" })
 	protected static void setAlarms(Context context, JSONArray alarms, boolean cancelAlarms) throws JSONException, ParseException{
 
@@ -173,6 +188,7 @@ public class WakeupPlugin extends CordovaPlugin {
 				addOptionalBooleanExtra(intent, "skipOnAwake", alarm);
 				addOptionalBooleanExtra(intent, "skipOnRunning", alarm);
 				addOptionalBooleanExtra(intent, "startInBackground", alarm);
+				addOptionalOptionExtras(intent, alarm);
 
 				setNotification(context, type, alarmDate, intent, ID_ONETIME_OFFSET);
 
@@ -191,6 +207,7 @@ public class WakeupPlugin extends CordovaPlugin {
 					addOptionalBooleanExtra(intent, "skipOnAwake", alarm);
 					addOptionalBooleanExtra(intent, "skipOnRunning", alarm);
 					addOptionalBooleanExtra(intent, "startInBackground", alarm);
+					addOptionalOptionExtras(intent, alarm);
 
 					setNotification(context, type, alarmDate, intent, ID_DAYLIST_OFFSET + daysOfWeek.get(days.getString(j)));
 				}
@@ -205,6 +222,7 @@ public class WakeupPlugin extends CordovaPlugin {
 				addOptionalBooleanExtra(intent, "skipOnAwake", alarm);
 				addOptionalBooleanExtra(intent, "skipOnRunning", alarm);
 				addOptionalBooleanExtra(intent, "startInBackground", alarm);
+				addOptionalOptionExtras(intent, alarm);
 				setNotification(context, type, alarmDate, intent, ID_SNOOZE_OFFSET);
 			} else if ( type.equals("repeating")) {
 				Calendar alarmDate = getRepeatingAlertDate(time);
@@ -217,6 +235,7 @@ public class WakeupPlugin extends CordovaPlugin {
 				addOptionalBooleanExtra(intent, "skipOnAwake", alarm);
 				addOptionalBooleanExtra(intent, "skipOnRunning", alarm);
 				addOptionalBooleanExtra(intent, "startInBackground", alarm);
+				addOptionalOptionExtras(intent, alarm);
 
 				setNotification(context, type, alarmDate, intent, ID_REPEAT_OFFSET);
 			}
